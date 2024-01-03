@@ -1,5 +1,6 @@
 package com.example.journalservice.Core;
 
+import com.example.journalservice.Core.Security.TokenDecoder;
 import com.example.journalservice.Entities.Condition;
 import com.example.journalservice.Repository.IConditionRepo;
 import com.example.journalservice.View.RequestObjects.CreateConditionRequest;
@@ -24,11 +25,12 @@ public class ConditionService {
         return this.conditionRepo.findByPatientEmail(patientEmail);
     }
 
-    public Condition createCondition(CreateConditionRequest request){
+    public Condition createCondition(CreateConditionRequest request, String authHeader){
+        String doctorEmail = TokenDecoder.getEmailFromToken(authHeader);
         LocalDateTime timestamp = LocalDateTime.now();
         Condition conditionToSave = Condition.builder()
                 .patientEmail(request.getPatientEmail())
-                .doctorEmail(request.getDoctorEmail())
+                .doctorEmail(doctorEmail)
                 .timestamp(timestamp)
                 .diagnosis(request.getDiagnosis())
                 .build();
