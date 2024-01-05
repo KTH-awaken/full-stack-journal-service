@@ -34,19 +34,12 @@ public class EncounterController {
     @GetMapping("/encounter/details/{encounterId}")
     public ResponseEntity<EncounterDetailsVm> getEncounterDetails(@PathVariable long encounterId, @RequestHeader("Authorization") String authorizationHeader) {
         return  ResponseEntity.ok(encounterService.getEncounterDetails(encounterId,authorizationHeader));
-
     }
 
 
 
     @GetMapping("/encounter/{patientEmail}")
     public ResponseEntity<List<EncounterVm>> getPatientEncounter(@PathVariable String patientEmail, @RequestHeader("Authorization") String authHeader){
-        // DOCTOR AND EMPLOYEE ONLY
-        boolean isDoctor = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name());
-        boolean isEmployee = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.EMPLOYEE.name());
-        if(!isDoctor && !isEmployee)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         return ResponseEntity.ok(mapper.toEncounterVMs(encounterService.getPatientEncounters(patientEmail)));
 
     }
@@ -54,23 +47,13 @@ public class EncounterController {
     @PostMapping("/encounter")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<EncounterVm> createEncounter(@RequestBody CreateEncounterRequest request, @RequestHeader("Authorization") String authHeader){
-        // DOCTOR AND EMPLOYEE ONLY
-        boolean isDoctor = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name());
-        boolean isEmployee = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.EMPLOYEE.name());
-        if(!isDoctor && !isEmployee)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         return ResponseEntity.ok(mapper.toEncounterVM(encounterService.createEncounter(request)));
     }
 
     @PostMapping("/encounter/observation")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ObservationVm> addObservation(@RequestBody CreateObservationRequest request, @RequestHeader("Authorization") String authHeader){
-        // DOCTOR AND EMPLOYEE ONLY
-        boolean isDoctor = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name());
-        boolean isEmployee = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.EMPLOYEE.name());
-        if(!isDoctor && !isEmployee)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
 
         return ResponseEntity.ok(mapper.toObservationVM(encounterService.addObservation( request)));
     }

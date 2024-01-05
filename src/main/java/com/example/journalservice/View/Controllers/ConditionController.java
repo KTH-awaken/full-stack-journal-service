@@ -23,14 +23,7 @@ public class ConditionController {
 
 
     @GetMapping("/conditions/{patientEmail}")
-    public ResponseEntity<List<ConditionVm>> getPatientConditions(@PathVariable String patientEmail, @RequestHeader("Authorization") String authHeader){
-        // DOCTOR OR EMPLOYEE  ONLY
-        boolean isDoctor = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name());
-        boolean isEmployee = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.EMPLOYEE.name());
-
-        if(!isDoctor && !isEmployee)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
+    public ResponseEntity<List<ConditionVm>> getPatientConditions(@PathVariable String patientEmail){
         List<Condition> conditions = conditionService.getPatientConditions(patientEmail);
         List<ConditionVm> conditionVms = Mapper.toConditionVms(conditions);
         return ResponseEntity.ok(conditionVms);
@@ -47,27 +40,13 @@ public class ConditionController {
 
     @GetMapping("/condition/{conditionId}")
     public ResponseEntity<ConditionDetails> getConditionDetails(@PathVariable long conditionId, @RequestHeader("Authorization") String authHeader){
-
         ConditionDetails details = conditionService.getConditionDetails(conditionId, authHeader);
-
-        // DOCTOR, EMPLOYEE OR OWN ONLY
-        boolean isDoctor = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name());
-        boolean isEmployee = TokenDecoder.getRoleFromToken(authHeader).equals(UserType.EMPLOYEE.name());
-
-        if(!isDoctor && !isEmployee)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-
         return ResponseEntity.ok(details);
     }
 
 
     @PostMapping("/condition")
     public ResponseEntity<ConditionVm> createPatientCondition(@RequestBody CreateConditionRequest request, @RequestHeader("Authorization") String authHeader){
-        // DOCTOR ONLY
-        if(!TokenDecoder.getRoleFromToken(authHeader).equals(UserType.DOCTOR.name()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         Condition condition = conditionService.createCondition(request, authHeader);
         return ResponseEntity.ok(Mapper.toConditionVm(condition));
     }

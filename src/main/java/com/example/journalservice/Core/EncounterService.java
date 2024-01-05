@@ -93,7 +93,7 @@ public class EncounterService {
 
 
     private AccountVm getUserByEmail(String email, String authHeader){
-        AccountVm user = webClientService.fetchUserFromUserService("http://localhost:8081/user/" + email, authHeader).block();
+        AccountVm user = webClientService.fetchUserFromUserService("http://user-service:8081/user/" + email, authHeader).block();
         return user;
     }
 }

@@ -2,6 +2,7 @@ package com.example.journalservice.Core.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,12 @@ public class SecurityConfig {
         return httpSecurity.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(httpRequests -> httpRequests
+                        .requestMatchers("/conditions/{patientEmail}").hasAnyRole("DOCTOR", "EMPLOYEE")
+                        .requestMatchers("/condition/{conditionId}").hasAnyRole("DOCTOR","EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/condition").hasAnyRole("DOCTOR")
+                        .requestMatchers("/encounter/{patientEmail}").hasAnyRole("DOCTOR","EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/encounter").hasAnyRole("DOCTOR","EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/encounter/observation").hasAnyRole("DOCTOR","EMPLOYEE")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())))
