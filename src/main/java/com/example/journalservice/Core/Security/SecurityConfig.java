@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/encounter/{patientEmail}").hasAnyRole("DOCTOR","EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/encounter").hasAnyRole("DOCTOR","EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/encounter/observation").hasAnyRole("DOCTOR","EMPLOYEE")
+                        .requestMatchers("/health").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())))
