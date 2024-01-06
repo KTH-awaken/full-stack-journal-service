@@ -50,4 +50,10 @@ public class ConditionController {
         Condition condition = conditionService.createCondition(request, authHeader);
         return ResponseEntity.ok(Mapper.toConditionVm(condition));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck(){
+        return ResponseEntity.ok("ok");
+    }
+
 }
